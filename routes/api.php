@@ -24,13 +24,12 @@ use App\Http\Controllers\PlatController;
     });
 
 
-
-    //plats
-    Route::get('/plats', [PlatController::class, 'index']);         // liste plats
-    Route::middleware(['auth:sanctum','isAdmin'])->post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
-    Route::get('/plats/{id}',[PlatController::class,'show']); // // détail plat
-    Route::middleware(['auth:sanctum','isAdmin'])->put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
-    Route::middleware(['auth:sanctum','isAdmin'])->delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
+//plats
+Route::get('/plats', [PlatController::class, 'index']);         // liste plats
+Route::middleware(['auth:sanctum','isAdmin'])->post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
+Route::get('/plats/{id}',[PlatController::class,'show']); // // détail plat
+Route::middleware(['auth:sanctum','isAdmin'])->put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
+Route::middleware(['auth:sanctum','isAdmin'])->delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
 
 
 //commandes
