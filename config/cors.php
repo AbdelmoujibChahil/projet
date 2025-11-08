@@ -1,6 +1,5 @@
 <?php
-
-return [
+ 
 
     /*
     |--------------------------------------------------------------------------
@@ -14,21 +13,13 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-
-    'paths' => ['*'],
-
+return [
+    'paths' => ['*'], // ⭐ Autoriser toutes les routes
     'allowed_methods' => ['*'],
-
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
-
+    'allowed_origins' => ['http://localhost:3000'], // Votre URL React
     'allowed_origins_patterns' => [],
-
     'allowed_headers' => ['*'],
-
     'exposed_headers' => [],
-
     'max_age' => 0,
-
-    'supports_credentials' => true,
-
+    'supports_credentials' => true, // ⭐ Doit être true
 ];

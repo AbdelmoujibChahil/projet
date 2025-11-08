@@ -20,7 +20,7 @@ use App\Http\Controllers\PlatController;
     */
 
     Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-        return $request->user();
+        return  $request->user();
     });
 
 
@@ -37,5 +37,5 @@ Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commande/{id}/totale',[CommandeController::class,'calculecommande']); //calculecommande
 Route::get('/commande/{id}/services',[CommandeController::class,'getCommandeServices']);
 
-require __DIR__.'/auth.php';    
+require __DIR__.'/auth.php';
 
