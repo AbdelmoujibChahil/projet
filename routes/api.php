@@ -5,8 +5,11 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlatController;
-
-
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Http\JsonResponse;
+use Nette\Utils\Json;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +25,33 @@ use App\Http\Controllers\PlatController;
     Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
         return  $request->user();
     });
+//ALL USERS
+Route::get('/allusers',function(){
+return User::all();
+});
+
+//Modification d un USER
+Route::put('/modifier/{id}',function($id,Request $request){
+    $User = User::FindorFail($id);
+ $validated= $request->validate([
+      'name' => [ 'string', 'max:255'],
+      'email' => [ 'string', 'email', 'max:255', 'unique:users,email,'.$User->id],
+      //'unique:table,column,except_id' REGLES 
+     'password' => [ 'nullable',Password::defaults()],
+     ]);
+      // Si le mot de passe est fourni, on le hache
+    if (!empty($validated['password'])) {
+        $validated['password'] = Hash::make($validated['password']);
+    } else {
+        // Sinon, on le supprime du tableau pour ne pas écraser l'ancien mot de passe
+        unset($validated['password']);
+    }
+ $User->update($validated);
+ return response()->json(['message'=> 'modification reussite',
+'User' => $User,
+]);
+}); 
+    
 
 
 //plats
