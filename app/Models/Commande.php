@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Commande extends Model
 {
     use HasFactory;
+   protected $fillable = [
+    'user_id',
+        'adresse_livraison_id',
+        'prix_total',
+         'paymentMethod', 
+        'statut',
+        'date_commande',
+    ];
 
 protected $hidden=['pivot'];
  
@@ -16,24 +24,20 @@ protected $hidden=['pivot'];
     return $this->belongsToMany(Plat::class, 'commande_plat')->withPivot('quantite');
 }   
 
-public function users()
-{
-    return $this->belongsTo(User::class);
-}
-public function calculertotale(){
-        $prixTotale = 0;
-    foreach($this->plats as $plat){ // $this refers to commande actuelle + plats refers to plats() function=>liees les tables =>faire requetes sql auto 
-       $prixTotale= $plat->prix * $plat->Pivot->quantite ;
-    }  
-    return $prixTotale; 
-    }
-
-
 //Un utilisateur (User) peut passer plusieurs commandes.
 //Une commande (Commande) appartient à un seul utilisateur.
-public function user()
+public function users()
 {
-    return $this->belongsTo(User::class);
+    return $this->belongsTo(User::class,'user_id');
 }
+
+public function AdresseLivraison()
+{
+return $this->belongsTo(AdresseLivraison::class);
+}
+
+
+
+
 
 }

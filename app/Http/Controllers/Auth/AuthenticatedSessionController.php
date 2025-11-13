@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
 
     return response()->json([
         'message' => 'Vous êtes bien connecté',
- 
+    
     ], 200);
 }
  

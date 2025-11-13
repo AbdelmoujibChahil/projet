@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdresseLivraisonController;
 use App\Http\Controllers\CommandeController;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
@@ -64,8 +65,13 @@ Route::middleware(['auth:sanctum','isAdmin'])->delete('/plats/{id}',[PlatControl
 
 //commandes
 Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
-Route::get('/commande/{id}/totale',[CommandeController::class,'calculecommande']); //calculecommande
-Route::get('/commande/{id}/services',[CommandeController::class,'getCommandeServices']);
+Route::get('/commandes',[CommandeController::class,'getCommandeServices']);
+
+
+//Adresse_Livraison
+Route::middleware('auth:sanctum')->post('/adresse-livraison', [AdresseLivraisonController::class, 'store']);
+
+
 
 require __DIR__.'/auth.php';
 
