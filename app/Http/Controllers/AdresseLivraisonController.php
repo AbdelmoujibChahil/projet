@@ -8,16 +8,36 @@ use Illuminate\Support\Facades\Auth;
 
 class AdresseLivraisonController extends Controller
 {
-    public function store(Request $request)
+ public function store(Request $request)
 {
     $validated = $request->validate([
-        'full_name' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'street_address' => 'required|string|max:255',
+        'full_name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZÀ-ÿ ]{3,}$/'
+        ],
+
+        'phone' => [
+            'required',
+            'regex:/^[0-9]{6,15}$/'
+        ],
+
+        'street_address' => [
+            'required',
+            'string',
+            'min:6',
+            'max:255',
+            'regex:/^[0-9a-zA-ZÀ-ÿ \-,]{6,}$/'
+        ],
         'delivery_instructions' => 'nullable|string|max:255',
+    ], [
+        'full_name.regex' => 'Le nom doit contenir seulement des lettres et au moins 3 caractères.',
+        'phone.regex' => 'Le numéro doit contenir seulement des chiffres .',
+        'street_address.regex' => 'L’adresse doit être une adresse valide.',
     ]);
 
-    // ✅ Vérifie si l'utilisateur est bien authentifié
+    // Vérifie si l'utilisateur est bien authentifié
     $user = Auth::user();
     if (!$user) {
         return response()->json(['error' => 'Utilisateur non authentifié'], 401);
