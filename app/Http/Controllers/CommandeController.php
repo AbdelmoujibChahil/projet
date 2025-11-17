@@ -66,6 +66,27 @@ public function store(Request $request): JsonResponse
 
 
 
+    public function updateStatus(Request $request, $id)
+    {
+        // Validation
+        $request->validate([
+            'status' => 'required|string|in:en attente,payé,annulé'
+        ]);
+        // Récupérer la commande
+        $commande = Commande::findOrFail($id);
+
+        // Mettre à jour uniquement le champ status
+        $commande->status = $request->status;
+        $commande->save();
+
+        return response()->json([
+            'message' => 'Statut mis à jour avec succès',
+            'commande' => $commande
+        ]);
+    }
+
+
+
     
     public function getCommandeUsers(): JsonResponse
     {

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlatController;
+use App\Http\Controllers\paypalVerify;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -66,11 +67,18 @@ Route::middleware(['auth:sanctum','isAdmin'])->delete('/plats/{id}',[PlatControl
 //commandes
 Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commandes',[CommandeController::class,'getCommandeServices']);
+Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
 
 
 //Adresse_Livraison
 Route::middleware('auth:sanctum')->post('/adresse-livraison', [AdresseLivraisonController::class, 'store']);
 
+//Payment
+use App\Http\Controllers\StripeController;
+
+Route::post('/payment-intent', [StripeController::class, 'createPaymentIntent']);
+//----PAYPAL----
+Route::post('/paypal/verify', [paypalVerify::class, 'paypalVerify']);
 
 
 require __DIR__.'/auth.php';
