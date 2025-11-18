@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlatController;
 use App\Http\Controllers\paypalVerify;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -54,6 +55,10 @@ Route::put('/modifier/{id}',function($id,Request $request){
 ]);
 }); 
     
+ Route::patch('/modifier/{id}/username', [UserController::class, 'updatename']); //modifier Username
+ Route::patch('/modifier/{id}/email', [UserController::class, 'updateemail']); //modifier email
+ Route::patch('/modifier/{id}/password', [UserController::class, 'updatepassword']); //modifier password
+
 
 
 //plats

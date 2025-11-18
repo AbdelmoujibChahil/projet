@@ -59,6 +59,7 @@ public function store(Request $request): JsonResponse
     // 6. Retour API
     return response()->json([
         'message' => 'Commande créée avec succès',
+        'id'=>$commande->id,
         'commande' => $commande->load('plats', 'adresseLivraison')
     ], 201);
 }
@@ -70,13 +71,13 @@ public function store(Request $request): JsonResponse
     {
         // Validation
         $request->validate([
-            'status' => 'required|string|in:en attente,payé,annulé'
+            'statut' => 'required|string|in:en attente,payé,annulé'
         ]);
         // Récupérer la commande
         $commande = Commande::findOrFail($id);
 
         // Mettre à jour uniquement le champ status
-        $commande->status = $request->status;
+        $commande->statut = $request->statut;
         $commande->save();
 
         return response()->json([
