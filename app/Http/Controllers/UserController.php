@@ -36,11 +36,12 @@ class UserController extends Controller
             'user' => $user
         ]);   
      }
-        public function updatepassword(Request $request,$id){
-          $user = User::findorFail($id);
+        public function updatepassword(Request $request){ 
           $request->validate([
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'password' => ['required', 'confirmed'],
           ]);
+          $user = auth()->user();
+         
           $user->update(['password' => Hash::make($request->password)]);
        
         return response()->json([
@@ -48,4 +49,26 @@ class UserController extends Controller
             'user' => $user
         ]);   
      }
+
+     public function updatePhone(Request $request){
+    $request->validate([
+    'phone' => ['required', 'numeric', 'digits_between:8,15'],  
+    ],
+    [
+      'phone.numeric'=>'Le numéro doit contenir seulement des chiffres .',
+    ]
+  );
+    
+    $user = auth()->user();
+  
+    $user->update([
+        'phone' => $request->phone
+    ]);
+
+    return response()->json([
+        'message' => 'Phone updated successfully',
+        'user' => $user
+    ]);
+}
+
 }

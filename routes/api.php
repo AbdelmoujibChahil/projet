@@ -57,7 +57,8 @@ Route::put('/modifier/{id}',function($id,Request $request){
     
  Route::patch('/modifier/{id}/username', [UserController::class, 'updatename']); //modifier Username
  Route::patch('/modifier/{id}/email', [UserController::class, 'updateemail']); //modifier email
- Route::patch('/modifier/{id}/password', [UserController::class, 'updatepassword']); //modifier password
+ Route::patch('/modifier-password', [UserController::class, 'updatepassword']); //modifier password
+ Route::patch('/modifier-phone', [UserController::class, 'updatePhone']); //modifier phone
 
 
 
