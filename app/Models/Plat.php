@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Plat extends Model
 {
     use HasFactory;
-protected $hidden=['pivot'];
-    protected $fillable = ['nom', 'description', 'prix', 'image'];
+
+    protected $fillable = ['nom', 'description', 'prix', 'image','review_count'];
 
     public function commandes()
     {

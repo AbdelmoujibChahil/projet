@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Commande extends Model
 {
     use HasFactory;
+       const STATUTS = [
+        'pending',
+        'preparing',
+        'delivering',
+        'completed',
+        'canceled'
+    ];
    protected $fillable = [
     'user_id',
         'adresse_livraison_id',
@@ -17,7 +24,6 @@ class Commande extends Model
         'date_commande',
     ];
 
-protected $hidden=['pivot'];
  
     public function plats()
 {   

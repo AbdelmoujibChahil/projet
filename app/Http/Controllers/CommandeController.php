@@ -5,6 +5,7 @@ use App\Models\AdresseLivraison;
 use App\Models\Plat;
 
 use App\Models\Commande;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -96,5 +97,15 @@ public function store(Request $request): JsonResponse
 return response()->json($commande);
     }
 
-    
+
+public function getCommandeClient(): JsonResponse
+{
+     $user_id= auth()->user()->id;
+    $commande = Commande::where('user_id', $user_id)
+                        ->with('plats')
+                        ->get();
+
+    return response()->json($commande);
+}
+
 }

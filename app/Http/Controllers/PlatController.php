@@ -3,16 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plat;
+use App\Models\Rating;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class PlatController extends Controller
 {
     // Afficher tous les plats
-    public function index(): JsonResponse
-    {
-        return response()->json(Plat::all());
-    }
+  public function index()
+{
+    $plats = Plat::all()->map(function($plat) {
+        $avg = Rating::where('plat_id', $plat->id)->avg('rating');
+        $count = Rating::where('plat_id', $plat->id)->count();
+        return [
+            'id' => $plat->id,
+            'nom' => $plat->nom,
+            'prix' => $plat->prix,
+            'image' => $plat->image,
+            'rating' => round($avg ?? 0, 1),
+            'review_count' => $count,
+        ];
+    });
+
+    return response()->json($plats);
+}
+
 
     // Ajouter un plat
     public function store(Request $request): JsonResponse
@@ -44,6 +60,16 @@ class PlatController extends Controller
             ['message'=>'plat modifie avec succes',
             'plat'=> $plat]);
     }
+   
+    public function incrementReviewCount($id){
+ $plat  =  plat::find($id);
+$plat->review_count += 1;
+    $plat->save();
+
+    return response()->json([
+        'message' => 'Review count updated',
+        'review_count' => $plat->review_count
+]);    }
 
     // Supprimer un plat
     public function destroy($id)

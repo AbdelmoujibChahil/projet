@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdresseLivraisonController;
 use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -64,16 +66,32 @@ Route::put('/modifier/{id}',function($id,Request $request){
 
 //plats
 Route::get('/plats', [PlatController::class, 'index']);         // liste plats
-Route::middleware(['auth:sanctum','isAdmin'])->post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
+Route::middleware(['auth:sanctum','admin'])->post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
 Route::get('/plats/{id}',[PlatController::class,'show']); // // détail plat
-Route::middleware(['auth:sanctum','isAdmin'])->put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
-Route::middleware(['auth:sanctum','isAdmin'])->delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
+Route::middleware(['auth:sanctum','admin'])->put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
+Route::middleware(['auth:sanctum','admin'])->delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
+Route::post('/plats/{id}/review', [PlatController::class, 'incrementReviewCount']);
 
 
 //commandes
 Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
-Route::get('/commandes',[CommandeController::class,'getCommandeServices']);
+Route::get('/commandes',[CommandeController::class,'getCommandeServices']);//ADMIN
 Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
+Route::get('/commande-client', [CommandeController::class, 'getCommandeClient']);//recuperer les commandes avec les plats d un client
+
+// Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+
+    // 1. Route pour les cartes de statistiques (KPIs)
+    Route::get('/stats', [DashboardController::class, 'getKpis']);
+
+    // 2. Route pour les données de graphique de revenus
+    // Le paramètre {period} sera '7days', '30days', etc.
+    Route::get('/chart/revenue/{period}', [DashboardController::class, 'getRevenueTrends']);
+
+    // ... Ajoutez ici les routes pour Orders, Menu, Customers, etc.
+});
+
 
 
 //Adresse_Livraison
@@ -85,6 +103,13 @@ use App\Http\Controllers\StripeController;
 Route::post('/payment-intent', [StripeController::class, 'createPaymentIntent']);
 //----PAYPAL----
 Route::post('/paypal/verify', [paypalVerify::class, 'paypalVerify']);
+ 
+
+//RATINGS
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/rating', [RatingController::class, 'store']);
+});
+Route::get('/items/{id}/rating', [RatingController::class, 'averages']);
 
 
 require __DIR__.'/auth.php';
