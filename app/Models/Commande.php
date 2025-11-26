@@ -22,6 +22,8 @@ class Commande extends Model
          'paymentMethod', 
         'statut',
         'date_commande',
+         'priority',
+        'driver_id',
     ];
 
  
@@ -46,7 +48,11 @@ public function payment()
 {
     return $this->hasOne(Payment::class);
 }
-
+public function livreur()
+    {
+        // Supposons que votre clé étrangère est 'livreur_id' et le modèle cible est 'App\Models\Livreur'
+        return $this->belongsTo(Driver::class, 'driver_id');
+    }
 
 
 

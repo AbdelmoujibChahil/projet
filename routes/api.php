@@ -4,7 +4,10 @@ use App\Http\Controllers\AdresseLivraisonController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\AnalyticController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
@@ -17,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\JsonResponse;
 use Nette\Utils\Json;
+use App\Http\Controllers\AnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,8 +65,7 @@ Route::put('/modifier/{id}',function($id,Request $request){
  Route::patch('/modifier/{id}/email', [UserController::class, 'updateemail']); //modifier email
  Route::patch('/modifier-password', [UserController::class, 'updatepassword']); //modifier password
  Route::patch('/modifier-phone', [UserController::class, 'updatePhone']); //modifier phone
-
-
+ Route::post('/ajouter', [UserController::class, 'store']); //ajouter custumer
 
 //plats
 Route::get('/plats', [PlatController::class, 'index']);         // liste plats
@@ -75,15 +78,15 @@ Route::post('/plats/{id}/review', [PlatController::class, 'incrementReviewCount'
 Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commandes',[CommandeController::class,'getCommandeServices']);//ADMIN
 Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
+Route::get('/categories', [CategoryController::class, 'getCategories']);//recuperer les CATEGORIES
 
 // Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
-
+Route::get('/orders/dashboard', [CommandeController::class, 'dashboard']);
 Route::put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
 Route::delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
 Route::post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
 Route::get('/commande-client', [CommandeController::class, 'getCommandeUsers']);//recuperer les commandes avec les plats d un client
-Route::get('/categories', [CategoryController::class, 'getCategories']);//recuperer les CATEGORIES
 
     // 1. Route pour les cartes de statistiques (KPIs)
     Route::get('/stats', [DashboardController::class, 'getKpis']);
@@ -114,6 +117,57 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rating', [RatingController::class, 'store']);
 });
 Route::get('/items/{id}/rating', [RatingController::class, 'averages']);
+
+Route::post('/reports', [ReportController::class, 'store']);
+Route::prefix('reports')->group(function () {
+    Route::get('/', [ReportController::class, 'index']);
+    Route::get('/kpis', [ReportController::class, 'getKPIs']);
+    Route::get('/dashboard', [ReportController::class, 'dashboard']);
+    Route::patch('/{id}/read', [ReportController::class, 'markAsRead']);
+    Route::patch('/{id}/resolve', [ReportController::class, 'markAsResolved']);
+    Route::delete('/{id}', [ReportController::class, 'destroy']);
+});
+
+// Routes pour les livreurs
+Route::prefix('drivers')->group(function () {
+    Route::get('/dashboard', [DriverController::class, 'dashboard']);
+    Route::get('/available', [DriverController::class, 'getAvailableDrivers']);
+    Route::get('/', [DriverController::class, 'index']);
+    Route::post('/', [DriverController::class, 'store']);
+    Route::get('/{id}', [DriverController::class, 'show']);
+    Route::put('/{id}', [DriverController::class, 'update']);
+    Route::delete('/{id}', [DriverController::class, 'destroy']);
+    Route::patch('/{id}/status', [DriverController::class, 'updateStatus']);
+    Route::post('/assign', [DriverController::class, 'assignToOrder']);
+});
+
+
+/* 
+
+
+
+ 
+  getPeakHours: async () => {
+     return await api.get(`/api/analytics/peak-hours`);
+      },
+
+  
+  getCustomerMetrics: async (period = 'week') => {
+      return await api.get(`/api/analytics/customer-metrics`, {  params: { period } });
+  
+},*/
+
+
+Route::prefix('analytics')->group(function () {
+    Route::get('/stats', [AnalyticController::class, 'getStats']);
+    Route::get('/revenue-trends', [AnalyticController::class, 'getRevenueTrends']);
+    Route::get('/top-categories', [AnalyticController::class, 'getTopCategories']);
+    Route::get('/payment-methods', [AnalyticController::class, 'getPaymentMethods']);
+    Route::get('/top-products', [AnalyticController::class, 'getTopProducts']);
+    Route::get('/peak-hours', [AnalyticController::class, 'getPeakHours']);
+    Route::get('/customer-metrics', [AnalyticController::class, 'getCustomerMetrics']);
+    Route::get('/export-report', [AnalyticController::class, 'exportReport']);
+});
 
 
 require __DIR__.'/auth.php';

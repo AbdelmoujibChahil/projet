@@ -11,7 +11,38 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 class UserController extends Controller
+{public function store(Request $request)
 {
+    $validated = $request->validate([
+        'name'              => 'required|string|max:255',
+        'email'             => 'required|email|unique:users,email',
+        'role'              => 'required|string',
+        'password'          => 'required|string|min:6',
+        'phone'             => 'nullable|string|max:20',
+        'adress'          =>'nullable|string'
+    ]);
+
+    $user = User::create([
+        'name'              => $validated['name'],
+        'email'             => $validated['email'],
+        'role'              => $validated['role'],
+        'password'          => Hash::make($validated['password']), 
+        'phone'             => $validated['phone'] ?? null,
+        'email_verified_at' => null,
+                'adress'      => $validated['adress'],
+
+    ]);
+
+    return response()->json([
+        'message' => 'Utilisateur ajouté avec succès',
+        'user'    => $user,
+    ], 201);
+}
+
+   
+
+
+
     public function updatename(Request $request,$id){
           $user = User::findorFail($id);
           $request->validate([

@@ -108,7 +108,17 @@ public function getCommandeClient(): JsonResponse
 }
 
 
-   
+   public function dashboard()
+{
+    return response()->json([
+        'pending'      => Commande::where('statut', 'Pending')->count(),
+        'on_delivery'  => Commande::where('statut', 'On Delivery')->count(),
+        'completed'    => Commande::where('statut', 'Completed')->count(),
+        'drivers'      => User::where('role', 'driver')->count(),
+        'Commandes'       => Commande::with(['user','AdresseLivraison','plats'])->orderBy('id', 'DESC')->get(),
+    ]);
+}
+
 
 
 }
