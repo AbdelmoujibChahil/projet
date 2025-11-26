@@ -71,4 +71,89 @@ class UserController extends Controller
     ]);
 }
 
+public function allusers()
+{
+    $users = User::with([
+        'commandes',
+        'ratings.plat',
+    ])->get();
+
+    $result = $users->map(function ($user) {
+
+        // ========== CALCULS ==========
+        $totalOrders = $user->commandes->count();
+        $totalSpent  = $user->commandes->sum('prix_total');
+
+        $lastOrder = optional(
+            $user->commandes->sortByDesc('created_at')->first()
+        )->created_at;
+
+        $avgRating = round($user->ratings->avg('rating') ?? 0, 1);
+
+        $favoriteItems = $user->ratings
+            ->where('rating', '>=', 4)
+            ->pluck('plat.nom')
+            ->unique()
+            ->values();
+
+        // ========== TIER AUTOMATIQUE ==========
+        $tier = "bronze";
+        if ($totalSpent > 3000)  $tier = "gold";
+        else if ($totalSpent > 1500) $tier = "silver";
+
+        // ========== STATUS AUTOMATIQUE ==========
+        // Active = a fait au moins 1 commande dans les 90 derniers jours
+        $status = "inactive";
+        if ($lastOrder && $lastOrder->gt(now()->subDays(90))) {
+            $status = "active";
+        }
+
+        // ========== NOTES ==========
+        $notes = $user->notes ?? "No notes"; // si tu as une colonne "notes"
+
+        // ========== ADDRESS ==========
+        $address = $user->email 
+           ;
+        return [
+            "id"            => $user->id,
+            "name"          => $user->name,
+            "email"         => $user->email,
+            "phone"         => $user->phone,
+            "address"       => $address,
+
+            "joinDate"      => optional($user->created_at)->format('Y-m-d'),
+
+            "totalOrders"   => $totalOrders,
+            "totalSpent"    => $totalSpent,
+
+            "status"        => $status,
+            "tier"          => $tier,
+
+            "avatar"        => "https://i.pravatar.cc/150?u=user_" . $user->id,
+
+            "lastOrder"     => optional($lastOrder)->format('Y-m-d'),
+            "favoriteItems" => $favoriteItems,
+
+            "rating"        => $avgRating,
+
+            "notes"         => $notes,
+
+            "reviews"       => $user->ratings->map(function ($rate) {
+                return [
+                    'plat'     => $rate->plat->nom ?? "Deleted item",
+                    'rating'   => $rate->rating,
+                    'feedback' => $rate->feedback,
+                    'date'     => optional($rate->created_at)->format('Y-m-d')
+                ];
+            }),
+        ];
+    });
+
+    return response()->json($result);
+}
+
+
+
+
+
 }

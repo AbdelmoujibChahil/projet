@@ -16,6 +16,7 @@ class PlatController extends Controller
     $plats = Plat::all()->map(function($plat) {
         $avg = Rating::where('plat_id', $plat->id)->avg('rating');
         $count = Rating::where('plat_id', $plat->id)->count();
+        $category=$plat->category;
         return [
             'id' => $plat->id,
             'nom' => $plat->nom,
@@ -23,6 +24,15 @@ class PlatController extends Controller
             'image' => $plat->image,
             'rating' => round($avg ?? 0, 1),
             'review_count' => $count,
+            'category'=>$category,
+            'description' => $plat->description, 
+            'discount' => $plat->discount ?? 0,
+            'isAvailable' => $plat->isAvailable ?? true, 
+            'isPopular' => $plat->isPopular ?? false,     
+            'isFeatured' => $plat->isFeatured ?? false,   
+            'rating' => round($avg ?? 0, 1),
+            'review_count' => $count,
+             'category_id' =>  $plat->category_id,
         ];
     });
 
@@ -38,6 +48,11 @@ class PlatController extends Controller
         'prix' => 'required|numeric|min:0',
         'description' => 'nullable|string',
         'image' => 'nullable|string|max:255',
+    'isAvailable' => 'boolean' ,
+          'isPopular' => 'boolean',
+           'isFeatured' => 'boolean',
+    'discount' => 'nullable|numeric|min:0',
+
     ]);
         $plat = Plat::create($validated);
         return response()->json( 

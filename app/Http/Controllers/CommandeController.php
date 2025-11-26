@@ -72,7 +72,7 @@ public function store(Request $request): JsonResponse
     {
         // Validation
         $request->validate([
-            'statut' => 'required|string|in:en attente,payé,annulé'
+            'statut' => 'required|string' 
         ]);
         // Récupérer la commande
         $commande = Commande::findOrFail($id);
@@ -92,8 +92,7 @@ public function store(Request $request): JsonResponse
     
     public function getCommandeUsers(): JsonResponse
     {
-       $commande = Commande::with(['plats','users'])->get();
-      
+       $commande = Commande::with(['plats','user'])->get();
 return response()->json($commande);
     }
 
@@ -107,5 +106,9 @@ public function getCommandeClient(): JsonResponse
 
     return response()->json($commande);
 }
+
+
+   
+
 
 }

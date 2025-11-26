@@ -4,6 +4,8 @@ use App\Http\Controllers\AdresseLivraisonController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,9 +33,7 @@ use Nette\Utils\Json;
         return  $request->user();
     });
 //ALL USERS
-Route::get('/allusers',function(){
-return User::all();
-});
+Route::get('/allusers',[UserController::class,'allusers']);
 
 //Modification d un USER
 Route::put('/modifier/{id}',function($id,Request $request){
@@ -66,10 +66,8 @@ Route::put('/modifier/{id}',function($id,Request $request){
 
 //plats
 Route::get('/plats', [PlatController::class, 'index']);         // liste plats
-Route::middleware(['auth:sanctum','admin'])->post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
 Route::get('/plats/{id}',[PlatController::class,'show']); // // détail plat
-Route::middleware(['auth:sanctum','admin'])->put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
-Route::middleware(['auth:sanctum','admin'])->delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
+
 Route::post('/plats/{id}/review', [PlatController::class, 'incrementReviewCount']);
 
 
@@ -77,20 +75,26 @@ Route::post('/plats/{id}/review', [PlatController::class, 'incrementReviewCount'
 Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commandes',[CommandeController::class,'getCommandeServices']);//ADMIN
 Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
-Route::get('/commande-client', [CommandeController::class, 'getCommandeClient']);//recuperer les commandes avec les plats d un client
 
 // Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
+Route::put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
+Route::delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
+Route::post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
+Route::get('/commande-client', [CommandeController::class, 'getCommandeUsers']);//recuperer les commandes avec les plats d un client
+Route::get('/categories', [CategoryController::class, 'getCategories']);//recuperer les CATEGORIES
+
     // 1. Route pour les cartes de statistiques (KPIs)
     Route::get('/stats', [DashboardController::class, 'getKpis']);
-
+   
     // 2. Route pour les données de graphique de revenus
     // Le paramètre {period} sera '7days', '30days', etc.
     Route::get('/chart/revenue/{period}', [DashboardController::class, 'getRevenueTrends']);
-
-    // ... Ajoutez ici les routes pour Orders, Menu, Customers, etc.
+ Route::get('/getOrderDistribution/{period}', [DashboardController::class, 'getOrderDistribution']);
 });
+
+Route::post('commandes/{id}/payment', [PaymentController::class, 'store']);
 
 
 

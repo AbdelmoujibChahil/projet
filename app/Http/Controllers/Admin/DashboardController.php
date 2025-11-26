@@ -108,7 +108,7 @@ return response()->json([
 
    public function getOrderDistribution(string $period = 'today')
 {
-    // 1️⃣ Déterminer la date de début selon la période
+    //  Déterminer la date de début selon la période
     $now = Carbon::now();
     $startDate = match ($period) {
         'today' => $now->startOfDay(),
@@ -117,7 +117,7 @@ return response()->json([
         default => $now->startOfDay(),
     };
 
-    // 2️⃣ Récupérer les commandes filtrées par date
+    // Récupérer les commandes filtrées par date
     $orders =Commande::where('created_at', '>=', $startDate)->get();
 
     $totalOrders = $orders->count();
@@ -132,7 +132,7 @@ return response()->json([
         ]);
     }
 
-    // 3️⃣ Compter les commandes par statut
+    //  Compter les commandes par statut
     $statutCounts = $orders->groupBy('statut')->map(fn($group) => $group->count());
 
     $distribution = [];
@@ -155,10 +155,8 @@ return response()->json([
         }
     }
 
-    // 4️⃣ Calculer le taux de complétion
     $completionRate = round(($completedOrders / $totalOrders) * 100, 1);
 
-    // 5️⃣ Retourner la réponse JSON
     return response()->json([
         'total_orders' => $totalOrders,
         'completion_rate' => $completionRate,

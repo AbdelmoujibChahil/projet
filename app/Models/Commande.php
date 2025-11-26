@@ -32,7 +32,7 @@ class Commande extends Model
 
 //Un utilisateur (User) peut passer plusieurs commandes.
 //Une commande (Commande) appartient à un seul utilisateur.
-public function users()
+public function user()
 {
     return $this->belongsTo(User::class,'user_id');
 }
@@ -40,6 +40,11 @@ public function users()
 public function AdresseLivraison()
 {
 return $this->belongsTo(AdresseLivraison::class);
+}
+
+public function payment()
+{
+    return $this->hasOne(Payment::class);
 }
 
 
