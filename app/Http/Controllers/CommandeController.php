@@ -115,7 +115,7 @@ public function getCommandeClient(): JsonResponse
         'on_delivery'  => Commande::where('statut', 'On Delivery')->count(),
         'completed'    => Commande::where('statut', 'Completed')->count(),
         'drivers'      => User::where('role', 'driver')->count(),
-        'Commandes'       => Commande::with(['user','AdresseLivraison','plats'])->orderBy('id', 'DESC')->get(),
+        'Commandes'       => Commande::with(['user','AdresseLivraison','plats','livreur', 'livreur.user'])->orderBy('id', 'DESC')->get(),
     ]);
 }
 

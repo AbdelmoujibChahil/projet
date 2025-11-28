@@ -47,14 +47,26 @@ class PlatController extends Controller
         'nom' => 'required|string|max:255',
         'prix' => 'required|numeric|min:0',
         'description' => 'nullable|string',
-        'image' => 'nullable|string|max:255',
+        'image' => 'required|image|mimes:jpg,jpeg,png,webp',
     'isAvailable' => 'boolean' ,
           'isPopular' => 'boolean',
            'isFeatured' => 'boolean',
     'discount' => 'nullable|numeric|min:0',
 
     ]);
-        $plat = Plat::create($validated);
+    $path = $request->file('image')->store('plats', 'public');
+
+        $plat = Plat::create([
+               'nom' => $request->nom,
+    'category_id' => $request->category_id,
+    'prix' => $request->prix,
+    'description' => $request->description,
+    'discount' => $request->discount,
+    'image' => asset('storage/' . $path),
+    'isAvailable' => $request->isAvailable,
+    'isPopular' => $request->isPopular,
+    'isFeatured' => $request->isFeatured,
+        ]);
         return response()->json( 
             ['message'=>'plat ajoute avec succes',
             'plat'=> $plat], 201);

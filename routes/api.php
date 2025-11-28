@@ -79,14 +79,16 @@ Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commandes',[CommandeController::class,'getCommandeServices']);//ADMIN
 Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
 Route::get('/categories', [CategoryController::class, 'getCategories']);//recuperer les CATEGORIES
+Route::middleware(['auth:sanctum'])->get('/commande-client', [CommandeController::class, 'getCommandeClient']);//recuperer les commandes avec les plats d un client
 
-// Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'
+// Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'   
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 Route::get('/orders/dashboard', [CommandeController::class, 'dashboard']);
 Route::put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
 Route::delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
 Route::post('/plats',[PlatController::class,'store']);   // ajouter plats 'ADMIN'
-Route::get('/commande-client', [CommandeController::class, 'getCommandeUsers']);//recuperer les commandes avec les plats d un client
+Route::get('/commande-clients', [CommandeController::class, 'getCommandeUsers']);//recuperer tous les plas Commandes
+
 
     // 1. Route pour les cartes de statistiques (KPIs)
     Route::get('/stats', [DashboardController::class, 'getKpis']);
