@@ -143,6 +143,7 @@ Route::prefix('drivers')->group(function () {
     Route::post('/assign', [DriverController::class, 'assignToOrder']);
 });
 
+     Route::get('/AllDeliveries', [DriverController::class, 'getAllDeliveries']);
 
 /* 
 

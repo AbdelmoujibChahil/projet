@@ -30,10 +30,10 @@ class DriverController extends Controller
                 ->map(function ($driver) {
                     return [
                         'id' => $driver->id,
-                        'name' => $driver->name,
-                        'initials' => $driver->initials,
-                        'phone' => $driver->phone,
-                        'email' => $driver->email,
+                        'name' => $driver->user->name,
+                        'initials' => $driver->user->initials,
+                        'phone' => $driver->user->phone,
+                        'email' => $driver->user->email,
                         'vehicle' => $driver->vehicle_type,
                         'vehicle_plate' => $driver->vehicle_plate,
                         'status' => $driver->statut,
@@ -43,7 +43,6 @@ class DriverController extends Controller
                         'current_deliveries' => $driver->active_deliveries_count,
                         'total_earnings' => (float) $driver->total_earnings,
                         'is_available' => $driver->is_available,
-                        'profile_image' => $driver->profile_image,
                         'ratings_count' => $driver->ratings->count(),
                     ];
                 });
@@ -336,35 +335,75 @@ class DriverController extends Controller
     }
 
     // Livreurs disponibles pour une commande
-  public function getAvailableDrivers()
-{
-    try {
-        // Récupérer les livreurs disponibles
-        $drivers = Driver::where('available', true)
-            ->whereIn('statut', ['active', 'on_delivery'])
-            ->withCount([
-                'commandes as active_deliveries_count' => function ($query) {
-                    $query->whereIn('statut', ['en cours', 'en livraison']);
-                }
-            ])
-            ->with('user:id,name,email,phone,adress') // inclure info user
-            ->orderBy('active_deliveries_count', 'asc') // trier par nombre de livraisons en cours
-            ->orderBy('rating', 'desc')                // puis par note
-            ->get();
+ public function getAvailableDrivers(Request $request)
+    {
+        try {
+            $commandeId = $request->input('commande_id');
+            $currentDriverId = null;
 
-        return response()->json([
-            'success' => true,
-            'drivers' => $drivers,
-        ], 200);
+            // Si une commande est spécifiée, récupérer son livreur actuel
+            if ($commandeId) {
+                $commande = Commande::find($commandeId);
+                $currentDriverId = $commande ? $commande->driver_id : null;
+            }
 
-    } catch (\Exception $e) {
+            // Récupérer les livreurs disponibles en excluant le livreur actuel
+            $query = Driver::where('available', true)
+                ->whereIn('statut', ['active', 'on_delivery'])
+                ->withCount([
+                    'commandes as active_deliveries_count' => function ($query) {
+                        $query->whereIn('statut', ['assigned', 'picked_up', 'in_transit']);
+                    }
+                ])
+                ->with('user:id,name,email,phone');
+
+            // Exclure le livreur actuellement assigné
+            if ($currentDriverId) {
+                $query->where('id', '!=', $currentDriverId);
+            }
+
+            $drivers = $query
+                ->orderBy('active_deliveries_count', 'asc')
+                ->orderBy('rating', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'drivers' => $drivers,
+                'current_driver_id' => $currentDriverId,
+                'total' => $drivers->count(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des livreurs disponibles',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+public function getAllDeliveries() {
+    $driver = Driver::where('user_id', auth()->user()->id)->first();
+
+    if (!$driver) {
         return response()->json([
             'success' => false,
-            'message' => 'Erreur lors de la récupération des livreurs disponibles',
-            'error' => $e->getMessage(),
-        ], 500);
+            'message' => 'Livreur non trouvé',
+        ], 404);
     }
+
+    $commandes = Commande::with(['user','plats','adresseLivraison','livreur'])
+        ->where('driver_id', $driver->id)
+        ->orderBy('date_commande', 'desc')
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'commandes' => $commandes
+    ], 200);
 }
+
 
 
 }
