@@ -21,6 +21,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\JsonResponse;
 use Nette\Utils\Json;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ use App\Http\Controllers\AnalyticsController;
     |
     */
 
-    Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    Route::middleware(['auth:api'])->get('/user', function (Request $request) {
         return  $request->user();
     });
 //ALL USERS
@@ -79,10 +80,10 @@ Route::post('/commande',[CommandeController::class,'store']); //ajoutez commande
 Route::get('/commandes',[CommandeController::class,'getCommandeServices']);//ADMIN
 Route::patch('/commande/{id}',[CommandeController::class,'updateStatus']); //modifier status
 Route::get('/categories', [CategoryController::class, 'getCategories']);//recuperer les CATEGORIES
-Route::middleware(['auth:sanctum'])->get('/commande-client', [CommandeController::class, 'getCommandeClient']);//recuperer les commandes avec les plats d un client
+Route::middleware(['auth:api'])->get('/commande-client', [CommandeController::class, 'getCommandeClient']);//recuperer les commandes avec les plats d un client
 
 // Ce groupe nécessite d'être connecté ET d'avoir le rôle 'admin'   
-Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth:api', 'admin'])->prefix('admin')->group(function () {
 Route::get('/orders/dashboard', [CommandeController::class, 'dashboard']);
 Route::put('/plats/{id}',[PlatController::class,'update']); // modifier plat 'ADMIN'
 Route::delete('/plats/{id}',[PlatController::class,'destroy']); // suppprimer plat 'ADMIN'
@@ -104,7 +105,7 @@ Route::post('commandes/{id}/payment', [PaymentController::class, 'store']);
 
 
 //Adresse_Livraison
-Route::middleware('auth:sanctum')->post('/adresse-livraison', [AdresseLivraisonController::class, 'store']);
+Route::middleware('auth:api')->post('/adresse-livraison', [AdresseLivraisonController::class, 'store']);
 
 //Payment
 use App\Http\Controllers\StripeController;
@@ -115,7 +116,7 @@ Route::post('/paypal/verify', [paypalVerify::class, 'paypalVerify']);
  
 
 //RATINGS
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::post('/rating', [RatingController::class, 'store']);
 });
 Route::get('/items/{id}/rating', [RatingController::class, 'averages']);
@@ -173,5 +174,12 @@ Route::prefix('analytics')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', fn () => auth()->user());
+});
+
 

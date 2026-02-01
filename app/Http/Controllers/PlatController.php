@@ -41,36 +41,32 @@ class PlatController extends Controller
 
 
     // Ajouter un plat
-    public function store(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
+public function store(Request $request): JsonResponse
+{
+    $validated = $request->validate([
         'nom' => 'required|string|max:255',
         'prix' => 'required|numeric|min:0',
-        'description' => 'nullable|string',
-        'image' => 'required|image|mimes:jpg,jpeg,png,webp',
-    'isAvailable' => 'boolean' ,
-          'isPopular' => 'boolean',
-           'isFeatured' => 'boolean',
-    'discount' => 'nullable|numeric|min:0',
-
+ 
+        'category_id' => 'required|exists:categories,id', 
     ]);
-    $path = $request->file('image')->store('plats', 'public');
 
-        $plat = Plat::create([
-               'nom' => $request->nom,
-    'category_id' => $request->category_id,
-    'prix' => $request->prix,
-    'description' => $request->description,
-    'discount' => $request->discount,
-    'image' => asset('storage/' . $path),
-    'isAvailable' => $request->isAvailable,
-    'isPopular' => $request->isPopular,
-    'isFeatured' => $request->isFeatured,
-        ]);
-        return response()->json( 
-            ['message'=>'plat ajoute avec succes',
-            'plat'=> $plat], 201);
+    $path = null;
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('plats', 'public');
     }
+
+    $plat = Plat::create([
+        'nom' => $request->nom,
+        'category_id' => $request->category_id,
+        'prix' => $request->prix,
+        
+    ]);
+
+    return response()->json([
+        'message' => 'plat ajouté avec succès',
+        'plat' => $plat
+    ], 201);
+}
 
     // Afficher un plat
     public function show($id)
@@ -82,7 +78,10 @@ class PlatController extends Controller
     public function update(Request $request, $id)
     {
         $plat = Plat::findOrFail($id);
-        $plat->update($request->all());
+     
+$plat->update($request->only([
+    'nom', 'prix'
+]));
         return response()->json( 
             ['message'=>'plat modifie avec succes',
             'plat'=> $plat]);

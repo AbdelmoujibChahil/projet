@@ -4,29 +4,40 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
- public function store(LoginRequest $request): JsonResponse
+public function store(Request $request)
 {
-    $request->authenticate();
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-    if ($request->hasSession()) {
-        $request->session()->regenerate();
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
+    // Générer un token
+    $token = $user->createToken('api_token')->plainTextToken;
+
     return response()->json([
-        'message' => 'Vous êtes bien connecté',
-    ], 200);
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+        'user' => $user
+    ]);
 }
- 
     /**
      * Destroy an authenticated session.
      */

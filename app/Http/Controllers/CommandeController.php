@@ -46,7 +46,7 @@ public function store(Request $request): JsonResponse
         'adresse_livraison_id' => $adresse->id,
         'prix_total' => $totalFinal,
          'paymentMethod' => $validated['paymentMethod'], 
-        'statut' => 'en attente',
+        'statut' => 'Pending',
         'date_commande' => now()
     ]);
 

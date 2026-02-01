@@ -10,7 +10,7 @@ class AnalyticController extends Controller
 {
     // ------------------ STATS ------------------
     public function getStats(Request $request)
-    {
+    {  
         $period = $request->input('period', 'week');
         $dateRange = $this->getDateRange($period);
 

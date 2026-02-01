@@ -17,7 +17,7 @@ public function up()
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->dateTime('date_commande');
-        $table->string('statut')->default('en attente');
+        $table->string('statut')->default('Pending');
         $table->timestamps();
     });
 }

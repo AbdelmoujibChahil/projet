@@ -40,6 +40,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
+            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ],
 
         // 'api' => [
@@ -47,11 +49,11 @@ class Kernel extends HttpKernel
         //     'throttle:api',
         //     \Illuminate\Routing\Middleware\SubstituteBindings::class,
         // ],
-        'api' => [
-    \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-    \Illuminate\Session\Middleware\StartSession::class, // ⭐ AJOUTER CETTE LIGNE
+   'api' => [
     'throttle:api',
+    \Illuminate\Routing\Middleware\SubstituteBindings::class,
 ],
+
 
     ];
 

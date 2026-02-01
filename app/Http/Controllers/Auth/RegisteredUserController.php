@@ -4,51 +4,58 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
-
+use Illuminate\Validation\Rules;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    /**
+     * Display the registration view.
+     */
+    public function create(): Response
     {
-         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-             //ici 'unique:..' recoit le nom table
-            'password' => ['required', 'confirmed', Password::defaults()],
-             //doit remplir le champ password_confirmation important
+        return Inertia::render('Auth/Register');
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ],[
+            'name.required'=>'Le nom est obligatoire',
+            'email.required'=>'L email est obligatoire',
+            'email.email'=>'Le format de l email est invalide',
+            'email.unique'=>'Cet email est deja utilise',
+            'password.required'=>'Le mot de passe est obligatoire',
+            'password.confirmed'=>'La confirmation du mot de passe ne correspond pas',
+            
+
         ]);
-        //password securise -Par défaut, ça impose :
-
-// Minimum 8 caractères
-
-// Doit contenir au moins une lettre majuscule (A-Z)
-
-// Doit contenir au moins une lettre minuscule (a-z)
-
-// Doit contenir au moins un chiffre (0-9)
-
-// Peut contenir un caractère spécial
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'client',
         ]);
-  Auth::login($user);
 
-       return response()->json([
-  'message' => 'Compte créé avec succès',
-  'user' => $user
-], 201);
+        event(new Registered($user));
 
+        Auth::login($user);
+
+        return redirect(RouteServiceProvider::HOME);
     }
 }

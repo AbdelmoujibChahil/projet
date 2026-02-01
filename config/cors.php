@@ -14,12 +14,12 @@
     |
     */
 return [
-    'paths' => ['*'], // ⭐ Autoriser toutes les routes
+    'paths' => ['*'], //  Autoriser toutes les routes
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000'], // Votre URL React
+    'allowed_origins' => ['http://localhost','http://localhost:3000','http://192.168.1.106'], // Votre URL React
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,
-    'supports_credentials' => true, // ⭐ Doit être true
+    'supports_credentials' => true, 
 ];
