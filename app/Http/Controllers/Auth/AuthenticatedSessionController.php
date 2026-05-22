@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,8 +30,8 @@ public function store(Request $request)
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
-    // Générer un token
-    $token = $user->createToken('api_token')->plainTextToken;
+    // Générer un token JWT
+    $token = JWTAuth::fromUser($user);
 
     return response()->json([
         'access_token' => $token,
