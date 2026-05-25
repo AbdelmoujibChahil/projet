@@ -5,6 +5,7 @@ namespace App\Features\User\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Features\User\Actions\CalculateUserStatsAction;
+use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
@@ -20,12 +21,17 @@ class UserService
         ]);
     }
 
-    public function update(User $user, array $data): User
+    public function update(User $user, array $data, $image = null): User
     {
+        if ($image) {
+            $data['image'] = $image->store('users', 'public');
+        }
+
         $user->update($data);
+
         return $user;
     }
-
+    
     public function updatePassword(User $user, string $password): User
     {
         $user->update([

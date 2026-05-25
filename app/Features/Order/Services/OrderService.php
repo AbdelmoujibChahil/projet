@@ -70,14 +70,14 @@ class OrderService
             ]);
         });
     }
-    public function getAll()
-{
-    return Commande::with([
-        'plats',
-        'user',
-        'adresseLivraison'
-    ])->latest()->get();
-}
+        public function getAll()
+        {
+            return Commande::with([
+                'plats',
+                'user',
+                'adresseLivraison'
+            ])->latest()->get();
+        }
 
         public function getClientOrders($userId)
         {

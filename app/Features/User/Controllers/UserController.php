@@ -22,9 +22,9 @@ class UserController extends Controller
 
     public function updateProfile(UpdateUserRequest $request, UserService $service)
     {
-        return response()->json($service->update(auth()->user(), $request->validated()));
+        
+        return response()->json($service->update(auth()->user(),$request->validated(),$request->file('image')));
     }
-
     public function updatePassword(Request $request, UserService $service)
     {
         return response()->json($service->updatePassword(auth()->user(), $request->password));

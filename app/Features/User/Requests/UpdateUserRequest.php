@@ -9,7 +9,7 @@ class UpdateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // tu peux ajouter policy plus tard
+         return true; 
     }
 
     public function rules(): array
@@ -29,6 +29,8 @@ class UpdateUserRequest extends FormRequest
             'address' => ['sometimes', 'string', 'nullable'],
 
             'role' => ['sometimes', 'string'],
+
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 

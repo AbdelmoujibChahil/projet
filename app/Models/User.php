@@ -31,8 +31,11 @@ public function getJWTCustomClaims()
     protected $fillable = [
         'name',
         'email',
-        'password','role',    'phone','adress'
-
+        'password',
+        'role',
+        'phone',
+        'adress',
+        'image'
     ];
 
     /**
