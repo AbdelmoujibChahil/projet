@@ -5,7 +5,6 @@ use App\Features\Driver\Enums\DriverStatus;
 use App\Features\Driver\Requests\AssignDriverRequest;
 use App\Features\Driver\Requests\StoreDriverRequest;
 use App\Features\Driver\Requests\UpdateDriverRequest;
-use App\Features\Driver\Requests\UpdateDriverStatusRequest;
 use App\Features\Driver\Services\DriverService;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
