@@ -15,5 +15,6 @@ Route::prefix('v1')->group(function () {
     require __DIR__.'/api/ratings.php';
     require __DIR__.'/api/addresses.php';
     require __DIR__.'/api/categories.php';
+    require __DIR__.'/api/dashboard.php';
 
 });
