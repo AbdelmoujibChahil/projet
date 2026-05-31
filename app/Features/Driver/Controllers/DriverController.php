@@ -20,22 +20,83 @@ class DriverController extends Controller
  * @OA\Post(
  *     path="/api/v1/drivers",
  *     summary="Create a new driver",
+ *     description="Create a new delivery driver",
+ *     operationId="createDriver",
  *     tags={"Drivers"},
  *     security={{"bearerAuth":{}}},
  *
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"name","phone"},
- *             @OA\Property(property="name", type="string", example="Ahmed Driver"),
- *             @OA\Property(property="phone", type="string", example="0612345678"),
- *             @OA\Property(property="vehicle", type="string", example="Motorcycle")
+ *             required={
+ *                 "name",
+ *                 "email",
+ *                 "password",
+ *                 "phone",
+ *                 "vehicle_type"
+ *             },
+ *
+ *             @OA\Property(
+ *                 property="name",
+ *                 type="string",
+ *                 example="Ahmed Driver"
+ *             ),
+ *             @OA\Property(
+ *                 property="email",
+ *                 type="string",
+ *                 format="email",
+ *                 example="ahmed.driver@gmail.com"
+ *             ),
+ *             @OA\Property(
+ *                 property="password",
+ *                 type="string",
+ *                 format="password",
+ *                 example="password123"
+ *             ),
+ *             @OA\Property(
+ *                 property="phone",
+ *                 type="string",
+ *                 example="0612345678"
+ *             ),
+ *             @OA\Property(
+ *                 property="vehicle_type",
+ *                 type="string",
+ *                 example="Motorcycle"
+ *             ),
+ *             @OA\Property(
+ *                 property="vehicle_plate",
+ *                 type="string",
+ *                 nullable=true,
+ *                 example="12345-A-1"
+ *             ),
+ *             @OA\Property(
+ *                 property="current_location",
+ *                 type="string",
+ *                 nullable=true,
+ *                 example="Agadir"
+ *             ),
+ *             @OA\Property(
+ *                 property="profile_image",
+ *                 type="string",
+ *                 nullable=true,
+ *                 example="drivers/profile.jpg"
+ *             )
  *         )
  *     ),
  *
  *     @OA\Response(
  *         response=201,
  *         description="Driver created successfully"
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized"
  *     )
  * )
  */
@@ -101,7 +162,9 @@ class DriverController extends Controller
 /**
  * @OA\Put(
  *     path="/api/v1/drivers/{driver}",
- *     summary="Update driver",
+ *     summary="Update an existing driver",
+ *     description="Update driver information",
+ *     operationId="updateDriver",
  *     tags={"Drivers"},
  *     security={{"bearerAuth":{}}},
  *
@@ -109,21 +172,77 @@ class DriverController extends Controller
  *         name="driver",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="Driver ID",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             @OA\Property(property="name", type="string", example="Ahmed Updated"),
- *             @OA\Property(property="phone", type="string", example="0611111111"),
- *             @OA\Property(property="vehicle", type="string", example="Car")
+ *             @OA\Property(property="name",             type="string",  example="Ahmed Updated"),
+ *             @OA\Property(property="email",            type="string",  format="email",  example="ahmed.updated@gmail.com"),
+ *             @OA\Property(property="phone",            type="string",  example="0611111111"),
+ *             @OA\Property(property="vehicle_type",     type="string",  example="Car"),
+ *             @OA\Property(property="vehicle_plate",    type="string",  nullable=true,   example="45678-B-2"),
+ *             @OA\Property(property="current_location", type="string",  nullable=true,   example="Agadir"),
+ *             @OA\Property(property="available",        type="boolean", example=true),
+ *             @OA\Property(property="profile_image",    type="string",  nullable=true,   example="drivers/profile_updated.jpg")
  *         )
  *     ),
  *
  *     @OA\Response(
  *         response=200,
- *         description="Driver updated successfully"
+ *         description="Driver updated successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Driver updated successfully"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="id",               type="integer", example=1),
+ *                 @OA\Property(property="name",             type="string",  example="Ahmed Updated"),
+ *                 @OA\Property(property="email",            type="string",  example="ahmed.updated@gmail.com"),
+ *                 @OA\Property(property="phone",            type="string",  example="0611111111"),
+ *                 @OA\Property(property="vehicle_type",     type="string",  example="Car"),
+ *                 @OA\Property(property="vehicle_plate",    type="string",  nullable=true, example="45678-B-2"),
+ *                 @OA\Property(property="current_location", type="string",  nullable=true, example="Agadir"),
+ *                 @OA\Property(property="available",        type="boolean", example=true),
+ *                 @OA\Property(property="profile_image",    type="string",  nullable=true, example="drivers/profile_updated.jpg"),
+ *                 @OA\Property(property="updated_at",       type="string",  format="date-time", example="2024-01-15T10:30:00Z")
+ *             )
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=404,
+ *         description="Driver not found",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Driver not found")
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="The email has already been taken."),
+ *             @OA\Property(
+ *                 property="errors",
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="email",
+ *                     type="array",
+ *                     @OA\Items(type="string", example="The email has already been taken.")
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+ *         )
  *     )
  * )
  */

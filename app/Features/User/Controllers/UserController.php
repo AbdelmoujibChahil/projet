@@ -39,10 +39,13 @@ class UserController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name","email","password"},
+     *             required={"name","email","password","role","phone","address"},
      *             @OA\Property(property="name", type="string", example="Salim"),
      *             @OA\Property(property="email", type="string", example="salim@gmail.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *             @OA\Property(property="role", type="string", example="client"),
+     *             @OA\Property(property="phone", type="string", example="1234567890"),
+     *             @OA\Property(property="address", type="string", example="123 Main St")
      *         )
      *     ),
      *     @OA\Response(
@@ -70,6 +73,9 @@ class UserController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="name", type="string"),
      *                 @OA\Property(property="email", type="string"),
+     *                 @OA\Property(property="phone", type="string"),
+     *                 @OA\Property(property="address", type="string"),
+     *                 @OA\Property(property="role", type="string"),
      *                 @OA\Property(
      *                     property="image",
      *                     type="string",

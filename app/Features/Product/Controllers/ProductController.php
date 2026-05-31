@@ -131,7 +131,11 @@ class ProductController extends Controller
  *             @OA\Property(property="description", type="string"),
  *             @OA\Property(property="prix", type="number", format="float", example=89.99),
  *             @OA\Property(property="category_id", type="integer", example=2),
- *             @OA\Property(property="image", type="string")
+ *             @OA\Property(property="image", type="string"),
+ *             @OA\Property(property="discount", type="string"),
+ *             @OA\Property(property="isAvailable", type="string"),       
+ *             @OA\Property(property="isFeatured", type="string")  ,     
+ *             @OA\Property(property="isPopular", type="string"),
  *         )
  *     ),
  *     @OA\Response(

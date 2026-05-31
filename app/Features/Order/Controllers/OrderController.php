@@ -31,10 +31,10 @@ class OrderController extends Controller
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"address_id","payment_method","plats"},
+ *             required={"adresse_livraison_id","payment_method","plats"},
  *
  *             @OA\Property(
- *                 property="address_id",
+ *                 property="adresse_livraison_id",
  *                 type="integer",
  *                 example=1
  *             ),
@@ -56,7 +56,7 @@ class OrderController extends Controller
  *                         example=2
  *                     ),
  *                     @OA\Property(
- *                         property="quantity",
+ *                         property="quantite",
  *                         type="integer",
  *                         example=3
  *                     )

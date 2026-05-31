@@ -29,9 +29,11 @@ class ReportController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"title","description"},
-     *             @OA\Property(property="title", type="string"),
-     *             @OA\Property(property="description", type="string")
+     *             required={"name","email","subject","message"},
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="subject", type="string"),
+     *             @OA\Property(property="message", type="string")
      *         )
      *     ),
      *     @OA\Response(
