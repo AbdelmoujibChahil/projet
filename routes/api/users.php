@@ -12,7 +12,6 @@ Route::middleware(['auth:api', 'admin'])->prefix('users')->group(function () {
 });
 
 Route::middleware('auth:api')->group(function () {
-  
     Route::get('/me', fn () => response()->json(auth()->user()));
     Route::put('/users/profile', [UserController::class, 'updateProfile']);
     Route::put('/users/password', [UserController::class, 'updatePassword']);

@@ -18,7 +18,10 @@ Route::middleware('auth:api')
             OrderController::class,
             'getClientOrders'
         ]);
-
+        
+        Route::patch('/{commande}',[
+            OrderController::class,
+            'updateStatus']);
     });
 
 /* ADMIN ROUTES*/
