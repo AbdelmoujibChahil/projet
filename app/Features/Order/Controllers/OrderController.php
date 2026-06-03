@@ -13,6 +13,8 @@ use App\Features\Order\Requests\StoreOrderRequest;
 use App\Features\Order\Requests\UpdateOrderStatusRequest;
 
 use App\Features\Order\Resources\OrderResource;
+use App\Models\User;
+
 /**
  * @OA\Tag(
  *     name="Orders",
@@ -221,4 +223,15 @@ class OrderController extends Controller
             'order' => new OrderResource($order)
         ]);
     }
+
+   public function dashboard()
+{
+    return response()->json([
+        'pending'      => Commande::where('statut', 'Pending')->count(),
+        'on_delivery'  => Commande::where('statut', 'On Delivery')->count(),
+        'completed'    => Commande::where('statut', 'Completed')->count(),
+        'drivers'      => User::where('role', 'driver')->count(),
+        'Commandes'    => Commande::with(['user','AdresseLivraison','plats','livreur', 'livreur.user'])->orderBy('id', 'DESC')->get(),
+    ]);
+}
 }

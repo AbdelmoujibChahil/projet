@@ -40,5 +40,10 @@ Route::middleware(['auth:api', 'admin'])
             OrderController::class,
             'updateStatus'
         ]);
+        //Dashboard
+        Route::get('/dashboard', [
+            OrderController::class,
+             'dashboard'
+         ]);
 
     });
