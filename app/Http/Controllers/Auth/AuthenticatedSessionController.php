@@ -36,7 +36,8 @@ public function store(Request $request)
     return response()->json([
         'access_token' => $token,
         'token_type' => 'Bearer',
-        'user' => $user
+        'user' => $user,
+        'status'=> 200,
     ]);
 }
     /**

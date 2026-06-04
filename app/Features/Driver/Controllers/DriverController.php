@@ -354,8 +354,10 @@ class DriverController extends Controller
  */
     public function assignToOrder(AssignDriverRequest $request)
     {
-        return response()->json($this->service->assignDriver($request->commande_id,$request->driver_id)
-        );
+        $commande = Commande::findOrFail($request->commande_id);
+        $driver = Driver::findOrFail($request->driver_id);
+
+        return $this->service->assignDriver($commande, $driver);
     }
 /**
  * @OA\Get(

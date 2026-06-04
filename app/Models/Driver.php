@@ -29,7 +29,7 @@ class Driver extends Model
     protected $casts = [
         'rating' => 'decimal:2',
         'total_earnings' => 'decimal:2',
-        'is_available' => 'boolean',
+        'available' => 'boolean',
     ];
        // Relations
     public function commandes()

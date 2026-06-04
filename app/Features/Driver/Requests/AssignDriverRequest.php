@@ -15,7 +15,7 @@ class AssignDriverRequest extends FormRequest
     {
         return [
 
-            'driver_id' => 'required|exists:drivers,id',
+            'driver_id' => 'required|exists:livreurs,id',
 
             'commande_id' => 'required|exists:commandes,id',
 
