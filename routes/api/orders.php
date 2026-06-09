@@ -45,5 +45,10 @@ Route::middleware(['auth:api', 'admin'])
             OrderController::class,
              'dashboard'
          ]);
-
+         
+        // Get order users
+        Route::get('/users', [
+            OrderController::class,
+            'getOrderUsers'
+        ]);
     });
