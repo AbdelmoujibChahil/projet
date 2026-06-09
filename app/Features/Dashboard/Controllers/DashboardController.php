@@ -12,7 +12,7 @@ class DashboardController extends Controller
     ) {}
 /**
  * @OA\Get(
- *     path="/api/v1/stats",
+ *     path="/api/v1/admin/dashboard/stats",
  *     summary="Get dashboard KPIs",
  *     description="Returns key performance indicators for admin dashboard",
  *     tags={"Dashboard"},
@@ -57,7 +57,7 @@ class DashboardController extends Controller
     }
 /**
  * @OA\Get(
- *     path="/api/v1/chart/revenue/{period}",
+ *     path="/api/v1/admin/dashboard/chart/revenue/{period}",
  *     summary="Get revenue trends",
  *     description="Returns revenue data for charts based on selected period",
  *     tags={"Dashboard"},
@@ -100,7 +100,7 @@ class DashboardController extends Controller
     }
 /**
  * @OA\Get(
- *     path="/api/v1/getOrderDistribution/{period}",
+ *     path="/api/v1/admin/dashboard/getOrderDistribution/{period}",
  *     summary="Get order distribution",
  *     description="Returns order status distribution for analytics dashboard",
  *     tags={"Dashboard"},

@@ -32,7 +32,7 @@ class CalculateUserStatsAction
 
             "tier" => $tier,
             "status" => $status,
-
+            "joinDate" => $user->created_at,
             "lastOrder" => optional($lastOrder)->format('Y-m-d'),
         ];
     }

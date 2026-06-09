@@ -234,4 +234,10 @@ class OrderController extends Controller
         'Commandes'    => Commande::with(['user','AdresseLivraison','plats','livreur', 'livreur.user'])->orderBy('id', 'DESC')->get(),
     ]);
 }
+    
+ public function getOrderUsers()
+    {
+        return response()->json(Commande::with(['plats','user'])->get());
+    }
+
 }
